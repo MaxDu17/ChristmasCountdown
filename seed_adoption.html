@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-108821978-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-108821978-2');
+</script>
+
+
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>The Adoption of SEED Labs</title>
+    <style>
+      html, body, #my-map{
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+
+<script>
+
+function initialize() {
+  var mapOptions = {
+    zoom: 2,
+    center: new google.maps.LatLng(48.862004,2.352394)
+  }
+
+  var map = new google.maps.Map(document.getElementById('my-map'), mapOptions);
+
+  var URL = "seed_adoption.json";
+  $.getJSON(URL, function(data) {
+     $.each(data.users, function(i, data) {
+           createMarker(map, data); 
+     }); // end each
+  }).error(function(jqXHR, textStatus, errorThrown){
+            alert("getJSON Failed!");
+  })
+}
+
+function createMarker(map, data) {
+    var myLatLng = new google.maps.LatLng(data.lat, data.lng);
+
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        title: data.name
+    });
+
+
+    return marker;
+}
+
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+
+  <body>
+    <div id="my-map"></div>
+  </body>
+</html>
