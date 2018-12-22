@@ -28,7 +28,7 @@ div {
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script>
 
 <script>
-var countDownDate = new Date("Dec 25, 2018 00:00:00").getTime();
+var countDownDate = new Date("Dec 25, 2017 00:00:00").getTime();
 function displayTime() {
     //var currentdate = new Date();
     //var datetime = currentdate.toLocaleString();
@@ -52,32 +52,26 @@ function displayTime() {
 }
 
 function getSantaLocation() {
-  $.ajax({
-//    url: 'https://santa-api.appspot.com/info?client=web&language=en&fingerprint=&routeOffset=0&streamOffset=0',
-    url: './test.php',
-    type:'GET',
-    success:function(response){
-       document.getElementById("location").innerHTML = response["location"];
-       getNameOfLocation(response["location"])
-    },
-    complete: function() {
-      setTimeout(getSantaLocation, 10000);
-    }
-  })
+     var now = new Date().getTime();
+     //var now = testnow;
+     for (i = current; i < gdest.length; i++) {
+       if (now >= gdest[i].arrival && now <= gdest[i].departure) {
+          var location = gdest[i].city + ", " + gdest[i].region;
+          document.getElementById("location").innerHTML = location;
+          break;
+       }
+     }
+     current  = i;
 }
 
-function getNameOfLocation(location) {
-  //location='13.026819,-85.178374';
-  $.ajax({
-    url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + location 
-          + '&key=AIzaSyCqquU8lChKK8Ma3pXoB9FHiBruhY9GbeE',
-    type:'GET',
-    success:function(response){
-       var results = response["results"];
-       var address = results[2].formatted_address;
-       document.getElementById("placename").innerHTML = address;
-    }
-  }) 
+
+function initialize(){
+   var URL = "santa_route.json";
+   $.getJSON(URL, function(data) {
+       gdest = data.destinations;
+   }).error(function(jqXHR, textStatus, errorThrown){
+        alert("getJSON Failed!");
+   })
 }
 </script>
 
@@ -90,8 +84,14 @@ function getNameOfLocation(location) {
 <div id="placename"></div>
 
 <script>
-var intervalID = setInterval(displayTime, 1000);
-window.onload = function() { displayTime(); getSantaLocation();}        
+var current = 0;
+var gdest;
+var testnow = 1514177881000;
+
+var timeintervalID = setInterval(displayTime, 1000);
+var santaintervalID = setInterval(getSantaLocation, 1000);
+
+window.onload = function() {displayTime(); initialize();}        
 </script>
 
 </body>
